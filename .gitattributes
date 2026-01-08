@@ -1,2 +1,3 @@
 datasets/epilepsy_dataset/epilepsy_federated_dataset.csv filter=lfs diff=lfs merge=lfs -text
 datasets/tuh_spectrogram/eeg_specs.npy filter=lfs diff=lfs merge=lfs -text
+datasets/tuh_spectrogram/*.npy filter=lfs diff=lfs merge=lfs -text
