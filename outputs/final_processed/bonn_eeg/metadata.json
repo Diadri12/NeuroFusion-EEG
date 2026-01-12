@@ -1,0 +1,19 @@
+{
+  "dataset": "Bonn EEG",
+  "samples": 400,
+  "features": 25,
+  "classes": 5,
+  "label_map": {
+    "1": "Healthy eyes open",
+    "2": "Healthy eyes closed",
+    "3": "Seizure-free (hippocampus)",
+    "4": "Seizure-free (tumor)",
+    "5": "Seizure"
+  },
+  "splits": {
+    "train": 280,
+    "val": 60,
+    "test": 60
+  },
+  "date": "2026-01-12 16:45:45"
+}

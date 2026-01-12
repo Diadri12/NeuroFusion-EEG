@@ -1,0 +1,13 @@
+{
+  "dataset": "Epilepsy Diagnosis",
+  "source_file": "EEG_Signal.csv",
+  "samples": 2048500,
+  "features": 1,
+  "classes": 500,
+  "splits": {
+    "train": 1433950,
+    "val": 307275,
+    "test": 307275
+  },
+  "date": "2026-01-12 16:46:55"
+}
