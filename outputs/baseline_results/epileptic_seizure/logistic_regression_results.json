@@ -1,7 +1,7 @@
 {
   "model": "Logistic_Regression",
   "dataset": "epileptic_seizure",
-  "timestamp": "2026-01-15 17:03:59",
+  "timestamp": "2026-01-16 17:32:37",
   "sampled": false,
   "data_shapes": {
     "train": [

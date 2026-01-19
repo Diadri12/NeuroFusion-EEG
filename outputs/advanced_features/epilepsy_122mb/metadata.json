@@ -1,0 +1,14 @@
+{
+  "dataset": "Epilepsy 122MB",
+  "sampling_rate": 178,
+  "total_samples": 289010,
+  "total_features": 60,
+  "classes": 3,
+  "splits": {
+    "train": 202307,
+    "val": 43351,
+    "test": 43352
+  },
+  "extraction_time_seconds": 1267.237084388733,
+  "timestamp": "2026-01-17 15:21:09"
+}

@@ -1,7 +1,7 @@
 {
   "model": "SVM_Linear",
   "dataset": "bonn_eeg",
-  "timestamp": "2026-01-16 16:05:53",
+  "timestamp": "2026-01-16 17:03:18",
   "sampled": false,
   "data_shapes": {
     "train": [

@@ -1,0 +1,14 @@
+{
+  "dataset": "Epileptic Seizure Dataset",
+  "sampling_rate": 173.61,
+  "total_samples": 11500,
+  "total_features": 60,
+  "classes": 5,
+  "splits": {
+    "train": 8050,
+    "val": 1725,
+    "test": 1725
+  },
+  "extraction_time_seconds": 94.36554026603699,
+  "timestamp": "2026-01-17 15:22:50"
+}
