@@ -1,0 +1,18 @@
+{
+  "dataset": "Epilepsy 122MB",
+  "frozen_file": "baseline_epilepsy_122mb.pt",
+  "metrics": {
+    "accuracy": 0.29519102832161187,
+    "f1": 0.13455581654929946,
+    "precision": 0.08713774320157065,
+    "recall": 0.29519102832161187,
+    "roc_auc": 0.5
+  },
+  "training": {
+    "epochs_trained": 21,
+    "final_train_loss": 0.6931583335483066,
+    "final_val_loss": 0.6944747931427426,
+    "best_val_loss": 0.6893174360609717
+  },
+  "frozen_date": "2026-01-24T15:54:14.258298"
+}

@@ -1,0 +1,18 @@
+{
+  "dataset": "Merged Epileptic + Bonn",
+  "frozen_file": "baseline_merged_epileptic_bonn.pt",
+  "metrics": {
+    "accuracy": 0.9523809523809523,
+    "f1": 0.9518398001452612,
+    "precision": 0.9517016295006234,
+    "recall": 0.9523809523809523,
+    "roc_auc": 0.9790360623781676
+  },
+  "training": {
+    "epochs_trained": 13,
+    "final_train_loss": 0.03885729121975601,
+    "final_val_loss": 0.2500623272997992,
+    "best_val_loss": 0.13601364621094295
+  },
+  "frozen_date": "2026-01-24T15:54:16.333082"
+}

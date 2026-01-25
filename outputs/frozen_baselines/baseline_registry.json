@@ -1,0 +1,56 @@
+{
+  "creation_date": "2026-01-24T15:54:16.352625",
+  "total_baselines": 4,
+  "source_directory": "/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/dl_optimized",
+  "frozen_directory": "/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/frozen_baselines",
+  "baselines": {
+    "bonn_eeg": {
+      "dataset_name": "Bonn EEG",
+      "frozen_file": "baseline_bonn_eeg.pt",
+      "n_classes": 5,
+      "metrics": {
+        "accuracy": 0.8166666666666667,
+        "f1": 0.8126564295919134,
+        "precision": 0.8802083333333334,
+        "recall": 0.8166666666666667,
+        "roc_auc": null
+      }
+    },
+    "epileptic_seizure": {
+      "dataset_name": "Epileptic Seizure",
+      "frozen_file": "baseline_epileptic_seizure.pt",
+      "n_classes": 5,
+      "metrics": {
+        "accuracy": 0.6846376811594203,
+        "f1": 0.6832371469981189,
+        "precision": 0.7057625235836871,
+        "recall": 0.6846376811594203,
+        "roc_auc": null
+      }
+    },
+    "epilepsy_122mb": {
+      "dataset_name": "Epilepsy 122MB",
+      "frozen_file": "baseline_epilepsy_122mb.pt",
+      "n_classes": 2,
+      "metrics": {
+        "accuracy": 0.29519102832161187,
+        "f1": 0.13455581654929946,
+        "precision": 0.08713774320157065,
+        "recall": 0.29519102832161187,
+        "roc_auc": 0.5
+      }
+    },
+    "merged_epileptic_bonn": {
+      "dataset_name": "Merged Epileptic + Bonn",
+      "frozen_file": "baseline_merged_epileptic_bonn.pt",
+      "n_classes": 2,
+      "metrics": {
+        "accuracy": 0.9523809523809523,
+        "f1": 0.9518398001452612,
+        "precision": 0.9517016295006234,
+        "recall": 0.9523809523809523,
+        "roc_auc": 0.9790360623781676
+      }
+    }
+  }
+}

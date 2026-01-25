@@ -1,0 +1,27 @@
+{
+  "Non-seizure": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 25956.0
+  },
+  "Seizure": {
+    "precision": 0.29519102832161187,
+    "recall": 1.0,
+    "f1-score": 0.45582624009392425,
+    "support": 10871.0
+  },
+  "accuracy": 0.29519102832161187,
+  "macro avg": {
+    "precision": 0.14759551416080594,
+    "recall": 0.5,
+    "f1-score": 0.22791312004696213,
+    "support": 36827.0
+  },
+  "weighted avg": {
+    "precision": 0.08713774320157065,
+    "recall": 0.29519102832161187,
+    "f1-score": 0.13455581654929946,
+    "support": 36827.0
+  }
+}
