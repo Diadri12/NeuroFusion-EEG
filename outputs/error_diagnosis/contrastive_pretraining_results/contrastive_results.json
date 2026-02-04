@@ -1,0 +1,102 @@
+{
+  "experiment": "Supervised Contrastive Pretraining",
+  "timestamp": "2026-01-29T12:13:00.840435",
+  "configuration": {
+    "branch_a_depth": "medium",
+    "use_residual": true,
+    "use_bilstm": false,
+    "normalization": "group",
+    "num_groups": 8,
+    "pretrain_epochs": 60,
+    "pretrain_batch_size": 128,
+    "pretrain_lr": 0.0001,
+    "temperature": 0.07,
+    "projection_dim": 128,
+    "use_augmentation": true,
+    "noise_std": 0.02,
+    "time_warp_strength": 0.1,
+    "scale_range": [
+      0.9,
+      1.1
+    ],
+    "feature_mask_ratio": 0.1,
+    "finetune_epochs": 80,
+    "finetune_batch_size": 64,
+    "finetune_lr": 5e-05,
+    "use_balanced_sampler": true,
+    "label_smoothing": 0.1,
+    "patience": 20,
+    "gradient_clip": 1.0,
+    "weight_decay": 0.0001,
+    "force_cpu": false
+  },
+  "stage1_pretraining": {
+    "epochs": 60,
+    "loss_type": "SupCon",
+    "temperature": 0.07,
+    "final_loss": 4.84418770840866,
+    "time_minutes": 94.58840748071671
+  },
+  "stage2_finetuning": {
+    "epochs": 62,
+    "best_val_f1": 0.29892220577398115,
+    "balanced_sampling": true,
+    "time_minutes": 80.18890665769577
+  },
+  "test_performance": {
+    "accuracy": 0.2823529411764706,
+    "precision_macro": 0.33782803363091435,
+    "recall_macro": 0.33715836216452794,
+    "f1_macro": 0.2762605687388809,
+    "f1_weighted": 0.2865322416392199
+  },
+  "per_class_metrics": {
+    "class_0": {
+      "precision": 0.607222635889799,
+      "recall": 0.18851132686084143,
+      "f1": 0.2877050626212736
+    },
+    "class_1": {
+      "precision": 0.25585725368502715,
+      "recall": 0.4551476676787193,
+      "f1": 0.3275725069527215
+    },
+    "class_2": {
+      "precision": 0.1504042113179169,
+      "recall": 0.367816091954023,
+      "f1": 0.21350413664264745
+    }
+  },
+  "confusion_matrix": [
+    [
+      1631,
+      3820,
+      3201
+    ],
+    [
+      656,
+      1649,
+      1318
+    ],
+    [
+      399,
+      976,
+      800
+    ]
+  ],
+  "prediction_distribution": [
+    2686,
+    6445,
+    5319
+  ],
+  "all_classes_predicted": true,
+  "comparisons": {
+    "Balanced Sampling": 0.26961098231311525,
+    "Contrastive (This)": 0.2762605687388809
+  },
+  "total_time_minutes": 174.77731413841246,
+  "improvement_over_baseline": {
+    "absolute": null,
+    "relative_percent": null
+  }
+}

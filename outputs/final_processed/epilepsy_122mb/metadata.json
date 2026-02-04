@@ -1,0 +1,14 @@
+{
+  "dataset": "Epilepsy 122MB",
+  "source_file": "epilepsy_federated_dataset.csv",
+  "samples": 289010,
+  "features": 51,
+  "classes": 3,
+  "note": "Features were pre-extracted in the dataset",
+  "splits": {
+    "train": 202307,
+    "val": 43351,
+    "test": 43352
+  },
+  "date": "2026-01-12 16:45:52"
+}

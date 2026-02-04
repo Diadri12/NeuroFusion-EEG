@@ -1,0 +1,39 @@
+
+DUAL-BRANCH ARCHITECTURE RATIONALE
+
+1. Why Two Branches?
+   - Phase 2 showed poor statistical separability
+   - Handcrafted features alone are insufficient
+   - Raw signals contain patterns beyond statistical features
+   - Dual approach combines domain knowledge (stable) + learned patterns (flexible)
+
+2. Branch A Design (Temporal Learner):
+   - 3 conv layers: Hierarchical feature learning
+     * Layer 1 (kernel=7): Basic waveform shapes
+     * Layer 2 (kernel=5): Pattern combinations  
+     * Layer 3 (kernel=3): Abstract temporal patterns
+   - Global Average Pooling: Translation-invariant representation
+   - Output: 64-dim learned embedding
+   
+3. Branch B Design (Feature Encoder):
+   - Only 2 layers: Features already meaningful
+   - Shallow to avoid overfitting on handcrafted features
+   - Purpose: Compress and preserve domain knowledge
+   - Output: 32-dim feature embedding
+
+4. Fusion Strategy:
+   - Concatenation allows classifier to learn optimal weighting
+   - Preserves both representations without assuming equal importance
+   - Simple and effective for first iteration
+
+5. Model Capacity:
+   - ~50,368 parameters
+   - With 96,333 samples
+   - Ratio: ~1.9 samples per parameter
+   - Sufficient to prevent overfitting with proper regularization
+
+6. Regularization Strategy:
+   - Batch normalization in all branches
+   - Dropout (0.2-0.4) increasing toward output
+   - Early stopping on validation macro F1
+   - No layer freezing - end-to-end training

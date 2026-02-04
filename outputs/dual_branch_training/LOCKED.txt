@@ -1,0 +1,12 @@
+Outputs locked on: 2026-01-27T16:58:20.104403
+
+DO NOT MODIFY:
+  - X_windowed.npy
+  - y_windowed.npy
+  - X_features.npy
+  - y_features.npy
+  - feature_names.json
+  - phase2_summary.json
+
+Frozen snapshot location:
+  /content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/dual_branch_training/frozen

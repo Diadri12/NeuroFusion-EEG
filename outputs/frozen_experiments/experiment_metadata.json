@@ -1,0 +1,28 @@
+{
+  "freeze_date": "2026-01-19 18:20:03",
+  "total_experiments": 45,
+  "datasets": [
+    "bonn_eeg",
+    "epilepsy_122mb",
+    "epilepsy_diagnosis",
+    "epileptic_seizure"
+  ],
+  "experiment_types": [
+    "Baseline (Basic Features)",
+    "Advanced Features",
+    "Fusion: Baseline",
+    "Fusion: Feature Selection",
+    "Fusion: Pca",
+    "Fusion: Hybrid"
+  ],
+  "best_overall": {
+    "dataset": "bonn_eeg",
+    "experiment": "Baseline (Basic Features)",
+    "accuracy": 0.9666666666666668
+  },
+  "summary": {
+    "avg_accuracy": 0.6131994205989008,
+    "max_accuracy": 0.9666666666666668,
+    "min_accuracy": 0.0048
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "export_date": "2026-02-01T14:40:12.759247",
+  "model_source": "Contrastive",
+  "frozen": true,
+  "checksums": {
+    "model_weights": "Not computed",
+    "feature_scaler": "Not computed"
+  }
+}

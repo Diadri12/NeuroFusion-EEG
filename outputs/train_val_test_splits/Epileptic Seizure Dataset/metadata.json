@@ -1,0 +1,91 @@
+{
+  "dataset": "Epileptic Seizure Recognition",
+  "source": "Preprocessed signals from full_preprocessing/",
+  "total_samples": 11500,
+  "signal_length": 178,
+  "sampling_rate_hz": 173.61,
+  "num_classes": 5,
+  "label_map": {
+    "1": "Seizure activity",
+    "2": "Tumor area",
+    "3": "Healthy brain",
+    "4": "Eyes closed",
+    "5": "Eyes open"
+  },
+  "features": {
+    "count": 25,
+    "time_domain": 11,
+    "frequency_domain": 13,
+    "feature_names": [
+      "mean",
+      "std",
+      "variance",
+      "skewness",
+      "kurtosis",
+      "min",
+      "max",
+      "range",
+      "rms",
+      "zero_crossings",
+      "mean_abs_diff",
+      "delta_power",
+      "theta_power",
+      "alpha_power",
+      "beta_power",
+      "gamma_power",
+      "total_power",
+      "delta_relative",
+      "theta_relative",
+      "alpha_relative",
+      "beta_relative",
+      "gamma_relative",
+      "spectral_entropy",
+      "peak_frequency",
+      "spectral_edge"
+    ]
+  },
+  "splits": {
+    "train_samples": 8050,
+    "val_samples": 1725,
+    "test_samples": 1725,
+    "train_ratio": 0.7,
+    "val_ratio": 0.15,
+    "test_ratio": 0.15,
+    "random_seed": 42
+  },
+  "label_distribution": {
+    "overall": {
+      "1": 2300,
+      "2": 2300,
+      "3": 2300,
+      "4": 2300,
+      "5": 2300
+    },
+    "train": {
+      "1": 1610,
+      "2": 1610,
+      "3": 1610,
+      "4": 1610,
+      "5": 1610
+    },
+    "val": {
+      "1": 345,
+      "2": 345,
+      "3": 345,
+      "4": 345,
+      "5": 345
+    },
+    "test": {
+      "1": 345,
+      "2": 345,
+      "3": 345,
+      "4": 345,
+      "5": 345
+    }
+  },
+  "normalization": {
+    "method": "StandardScaler",
+    "fitted_on": "training_set"
+  },
+  "processing_date": "2026-01-10 15:16:52"
+}

@@ -1,0 +1,93 @@
+{
+  "model": "SVM_Linear",
+  "dataset": "epilepsy_122mb",
+  "timestamp": "2026-01-16 17:03:33",
+  "sampled": true,
+  "data_shapes": {
+    "train": [
+      50000,
+      51
+    ],
+    "val": [
+      10000,
+      51
+    ],
+    "test": [
+      10000,
+      51
+    ]
+  },
+  "original_sizes": {
+    "train": 202307,
+    "val": 43351,
+    "test": 43352
+  },
+  "validation_metrics": {
+    "accuracy": 0.5987,
+    "precision": 0.35844169000000003,
+    "recall": 0.5987,
+    "f1_score": 0.44841645086632886,
+    "roc_auc": 0.4992827004851318,
+    "sensitivity": 0.3333333333333333,
+    "specificity": 0.6666666666666666
+  },
+  "test_metrics": {
+    "accuracy": 0.5987,
+    "precision": 0.35844169000000003,
+    "recall": 0.5987,
+    "f1_score": 0.44841645086632886,
+    "roc_auc": 0.4957614476723387,
+    "sensitivity": 0.3333333333333333,
+    "specificity": 0.6666666666666666
+  },
+  "confusion_matrix": [
+    [
+      5987,
+      0,
+      0
+    ],
+    [
+      2508,
+      0,
+      0
+    ],
+    [
+      1505,
+      0,
+      0
+    ]
+  ],
+  "classification_report": {
+    "0": {
+      "precision": 0.5987,
+      "recall": 1.0,
+      "f1-score": 0.7489835491336712,
+      "support": 5987.0
+    },
+    "1": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 2508.0
+    },
+    "2": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 1505.0
+    },
+    "accuracy": 0.5987,
+    "macro avg": {
+      "precision": 0.19956666666666667,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.24966118304455706,
+      "support": 10000.0
+    },
+    "weighted avg": {
+      "precision": 0.35844169000000003,
+      "recall": 0.5987,
+      "f1-score": 0.44841645086632886,
+      "support": 10000.0
+    }
+  }
+}

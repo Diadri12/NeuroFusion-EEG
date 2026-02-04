@@ -1,0 +1,14 @@
+{
+  "dataset": "Bonn EEG",
+  "sampling_rate": 173.61,
+  "total_samples": 400,
+  "total_features": 60,
+  "classes": 4,
+  "splits": {
+    "train": 280,
+    "val": 60,
+    "test": 60
+  },
+  "extraction_time_seconds": 11.801088094711304,
+  "timestamp": "2026-01-17 14:58:55"
+}

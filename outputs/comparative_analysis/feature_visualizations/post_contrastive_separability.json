@@ -1,0 +1,32 @@
+{
+  "Raw Features": {
+    "inter_class_distance": 0.24977409679274876,
+    "intra_class_distance": 5.198266182690548,
+    "separability_score": 0.04804950112398136,
+    "per_class_intra": [
+      5.274610112627105,
+      5.225755306975949,
+      5.09443312846859
+    ]
+  },
+  "PCA Features": {
+    "inter_class_distance": 0.24962246762010296,
+    "intra_class_distance": 5.194596791838504,
+    "separability_score": 0.048054252835849,
+    "per_class_intra": [
+      5.270796749865686,
+      5.221951224909957,
+      5.09104240073987
+    ]
+  },
+  "Enhanced Features (Proxy)": {
+    "inter_class_distance": 0.039166182000397454,
+    "intra_class_distance": 0.9982088261833336,
+    "separability_score": 0.03923646131864641,
+    "per_class_intra": [
+      0.9985026515786258,
+      0.9987613002255823,
+      0.9973625267457926
+    ]
+  }
+}

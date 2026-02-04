@@ -1,0 +1,46 @@
+{
+  "selected_model": "SupCon + Balanced",
+  "selection_date": "2026-01-29T18:43:34.708325",
+  "total_score": 0.6695183180331733,
+  "performance_metrics": {
+    "macro_f1": 0.2762605687388809,
+    "accuracy": 0.2823529411764706,
+    "per_class_recall": [
+      0.18851132686084143,
+      0.4551476676787193,
+      0.367816091954023
+    ],
+    "per_class_f1": [
+      0.2877050626212736,
+      0.3275725069527215,
+      0.21350413664264745
+    ],
+    "all_predicted": true,
+    "approach": "Contrastive Pretraining + Balanced Sampling",
+    "model_file": "/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/error_diagnosis/contrastive_pretraining_results/final_model.pt"
+  },
+  "evaluation_breakdown": {
+    "macro_f1": 0.9695492102288671,
+    "class_balance": 0.33908828243873296,
+    "methodological_rigor": 1.0,
+    "practical_applicability": 0.37702265372168287
+  },
+  "alternatives_considered": {
+    "Baseline (Weighted CE)": {
+      "total_score": 0.4695287356321839,
+      "macro_f1": 0.28493712936310694,
+      "all_predicted": true
+    },
+    "Balanced Sampling": {
+      "total_score": 0.6456640827489388,
+      "macro_f1": 0.26961098231311525,
+      "all_predicted": true
+    }
+  },
+  "selection_criteria": {
+    "macro_f1": 0.25,
+    "class_balance": 0.3,
+    "methodological_rigor": 0.25,
+    "practical_applicability": 0.2
+  }
+}

@@ -1,0 +1,68 @@
+
+PROBLEM ANALYSIS REPORT
+Generated: 2026-01-27 08:01:06.808971
+
+1. DATASET OVERVIEW
+
+Total Samples: 289,010
+Number of Classes: 3
+Signal Length: 51 samples
+
+2. CLASS DISTRIBUTION
+
+Class 0: 173,035 samples (59.87%)
+Class 1:  72,474 samples (25.08%)
+Class 2:  43,501 samples (15.05%)
+
+Imbalance Ratio: 3.98:1
+Severity: MODERATE
+
+3. IDENTIFIED PROBLEMS
+
+
+CRITICAL ISSUE: Class Imbalance
+
+Problem:
+  - Majority class (0) contains 59.9% of data
+  - Minority class (2) contains only 15.1% of data
+  - Ratio of 3.98:1 is significant
+
+Impact on Learning:
+  - Model biased toward predicting majority class
+  - High accuracy but poor minority class detection
+  - Low F1, precision, recall scores
+  - Identical results across different architectures
+
+Evidence:
+  - All models achieve ~59.9% accuracy
+  - F1 scores are low (~0.45)
+  - Confusion matrix shows empty predictions for minority classes
+
+
+4. RECOMMENDED SOLUTIONS
+
+Solution 1: Class-Weighted Loss Function (CRITICAL)
+  - Compute balanced class weights
+  - Use CrossEntropyLoss(weight=class_weights)
+  - Forces model to pay attention to minority classes
+
+Solution 2: Improved Feature Extraction
+  - Enhance STFT parameters (larger window, more overlap)
+  - Apply log scaling for better dynamic range
+  - Increases discriminative power
+
+Solution 3: Ablation Study
+  - Train baseline (raw only)
+  - Train STFT-only model
+  - Train dual-branch fusion
+  - Proves fusion value scientifically
+
+5. EXPECTED OUTCOMES
+
+After applying solutions:
+  ✓ F1 score should increase significantly
+  ✓ Precision/recall become balanced
+  ✓ Minority classes actually get predicted
+  ✓ Confusion matrix becomes more diagonal
+  ✓ Different architectures show different performance
+

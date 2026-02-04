@@ -1,0 +1,33 @@
+{
+  "overfit_test": {
+    "passed": true,
+    "final_accuracy": 1.0,
+    "threshold": 0.95,
+    "prediction_distribution": [
+      20,
+      20,
+      20
+    ]
+  },
+  "label_verification": {
+    "n_samples": 289010,
+    "n_classes": 3,
+    "class_distribution": {
+      "0": 173035,
+      "1": 72474,
+      "2": 43501
+    },
+    "labels_match_data": true,
+    "no_nans": true,
+    "no_infs": true
+  },
+  "feature_visualization": {
+    "avg_class_difference": 0.03324957624468946,
+    "separability": "POOR",
+    "pairwise_differences": {
+      "class_0_vs_1": 0.037770828138125837,
+      "class_0_vs_2": 0.039293464164704486,
+      "class_1_vs_2": 0.02268443643123804
+    }
+  }
+}
