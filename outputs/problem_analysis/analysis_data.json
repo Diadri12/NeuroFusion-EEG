@@ -1,0 +1,14 @@
+{
+  "total_samples": 289010,
+  "n_classes": 3,
+  "class_distribution": {
+    "0": 173035,
+    "1": 72474,
+    "2": 43501
+  },
+  "imbalance_ratio": 3.977724650008046,
+  "majority_class": 0,
+  "minority_class": 2,
+  "severity": "MODERATE",
+  "needs_class_weighting": true
+}

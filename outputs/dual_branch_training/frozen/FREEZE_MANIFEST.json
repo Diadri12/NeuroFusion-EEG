@@ -1,0 +1,33 @@
+{
+  "freeze_timestamp": "2026-01-27T16:58:20.063553",
+  "phase2_directory": "/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/feature_engineering",
+  "frozen_snapshot": "/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG/outputs/dual_branch_training/frozen",
+  "data_summary": {
+    "n_samples": 96333,
+    "signal_length": 256,
+    "n_features": 30,
+    "n_classes": 3,
+    "class_distribution": {
+      "0": 57677,
+      "1": 24157,
+      "2": 14499
+    }
+  },
+  "phase2_results": {
+    "avg_normalized_distance": 0.09435733544143814,
+    "separability": "POOR",
+    "ready_for_training": false
+  },
+  "motivation_for_phase3": "Insufficient statistical separation, REQUIRING representation learning",
+  "locked_files": [
+    "X_windowed.npy",
+    "y_windowed.npy",
+    "X_features.npy",
+    "y_features.npy",
+    "feature_names.json",
+    "phase2_summary.json"
+  ],
+  "warnings": [
+    "Low separability (<0.1) - deep learning will be challenging"
+  ]
+}

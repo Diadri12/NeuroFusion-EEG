@@ -1,0 +1,16 @@
+{
+  "accuracy": 0.15051208710094113,
+  "f1_weighted": 0.03938053083921009,
+  "f1_macro": 0.08721454778755738,
+  "per_class_f1": [
+    0.0,
+    0.0,
+    0.26164364336267215
+  ],
+  "predictions_per_class": [
+    0,
+    0,
+    43352
+  ],
+  "all_classes_predicted": false
+}

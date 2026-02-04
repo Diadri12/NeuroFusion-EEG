@@ -1,0 +1,69 @@
+{
+  "temporal_context": {
+    "original_length": 51,
+    "original_duration_sec": 0.28651685393258425,
+    "windowed_length": 256,
+    "windowed_duration_sec": 1.4382022471910112,
+    "original_samples": 289010,
+    "windowed_samples": 96333,
+    "increase_factor": 0.33332064634441716
+  },
+  "feature_extraction": {
+    "n_features": 30,
+    "feature_names": [
+      "delta",
+      "theta",
+      "alpha",
+      "beta",
+      "gamma",
+      "delta_rel",
+      "theta_rel",
+      "alpha_rel",
+      "beta_rel",
+      "gamma_rel",
+      "theta_alpha_ratio",
+      "delta_beta_ratio",
+      "theta_beta_ratio",
+      "total_power",
+      "spectral_entropy",
+      "hjorth_activity",
+      "hjorth_mobility",
+      "hjorth_complexity",
+      "mean",
+      "std",
+      "var",
+      "skewness",
+      "kurtosis",
+      "energy",
+      "rms",
+      "peak_to_peak",
+      "zero_crossings",
+      "stft_mean",
+      "stft_std",
+      "stft_max"
+    ],
+    "top_discriminative_features": [
+      "peak_to_peak",
+      "var",
+      "hjorth_activity",
+      "std",
+      "energy",
+      "rms",
+      "stft_max",
+      "stft_mean",
+      "skewness",
+      "mean"
+    ]
+  },
+  "separability": {
+    "avg_euclidean_distance": 373.34226867707974,
+    "avg_normalized_distance": 0.09435733544143814,
+    "separability": "POOR",
+    "ready_for_training": false,
+    "pairwise_distances": {
+      "class_0_vs_1": 0.05500509217513273,
+      "class_0_vs_2": 0.09372704634752652,
+      "class_1_vs_2": 0.13433986780165516
+    }
+  }
+}

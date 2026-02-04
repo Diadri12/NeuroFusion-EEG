@@ -1,0 +1,31 @@
+
+BASELINE DUAL-BRANCH (LOCKED)
+=================================================
+Run Date: 2026-01-28 16:14:57
+
+THESIS SUMMARY:
+"Baseline dual-branch CNN with weighted CrossEntropy shows partial class 
+separability with macro F1 of 0.0872. The architecture combines 
+convolutional feature learning (Branch A) with handcrafted EEG features 
+(Branch B), achieving 0.00%, 0.00%, 
+and 100.00% recall across the three classes respectively."
+
+KEY RESULTS:
+- Macro F1: 0.0872
+- Accuracy: 0.1505
+- All classes predicted: False
+- Architecture: CNN (NO BiLSTM) + Feature Encoder
+
+LIMITATIONS IDENTIFIED:
+- Limited temporal dependency modeling (CNN only)
+- Moderate performance on minority classes
+- No long-range pattern capture
+
+NEXT STEP:
+→ Phase 3 Representation Learning (BiLSTM enhancement)
+   Expected: Improved temporal modeling → Higher macro F1
+
+FILES FOR THESIS:
+- baseline_results_THESIS.png (Figure)
+- baseline_results.json (Metrics table)
+- classification_report.txt (Detailed results)

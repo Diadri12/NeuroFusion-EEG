@@ -1,0 +1,105 @@
+{
+  "name": "EEG Dual-Branch Classifier",
+  "branch_a": {
+    "name": "Temporal Signal Learner",
+    "input_shape": [
+      256,
+      1
+    ],
+    "architecture": "Conv1D CNN",
+    "purpose": "Learn local temporal patterns",
+    "layers": [
+      {
+        "block": 1,
+        "type": "conv",
+        "in_channels": 1,
+        "out_channels": 32,
+        "kernel_size": 7,
+        "stride": 2,
+        "purpose": "Basic waveform shapes",
+        "output_length": 64
+      },
+      {
+        "block": 2,
+        "type": "conv",
+        "in_channels": 32,
+        "out_channels": 64,
+        "kernel_size": 5,
+        "stride": 1,
+        "purpose": "Pattern combinations",
+        "output_length": 32
+      },
+      {
+        "block": 3,
+        "type": "conv",
+        "in_channels": 64,
+        "out_channels": 128,
+        "kernel_size": 3,
+        "stride": 1,
+        "purpose": "Abstract patterns",
+        "output_length": 16
+      },
+      {
+        "block": "gap",
+        "type": "pooling",
+        "output_dim": 128,
+        "purpose": "Temporal aggregation"
+      }
+    ],
+    "embedding_dim": 64,
+    "total_params_estimate": 43232
+  },
+  "branch_b": {
+    "name": "Physiological Feature Encoder",
+    "input_shape": [
+      30
+    ],
+    "architecture": "Shallow MLP",
+    "purpose": "Encode domain knowledge",
+    "layers": [
+      {
+        "layer": 1,
+        "type": "dense",
+        "in_features": 30,
+        "out_features": 64,
+        "purpose": "Feature compression"
+      },
+      {
+        "layer": 2,
+        "type": "dense",
+        "in_features": 64,
+        "out_features": 32,
+        "purpose": "Feature embedding"
+      }
+    ],
+    "embedding_dim": 32,
+    "total_params_estimate": 3968
+  },
+  "fusion": {
+    "type": "concatenation",
+    "input_dim_a": 64,
+    "input_dim_b": 32,
+    "fusion_dim": 96,
+    "purpose": "Combine complementary representations"
+  },
+  "classifier": {
+    "input_dim": 96,
+    "hidden_dim": 32,
+    "output_dim": 3,
+    "layers": [
+      {
+        "layer": 1,
+        "in_features": 96,
+        "out_features": 32,
+        "purpose": "Final representation"
+      },
+      {
+        "layer": "output",
+        "in_features": 32,
+        "out_features": 3,
+        "purpose": "Classification"
+      }
+    ]
+  },
+  "total_parameters": 50368
+}

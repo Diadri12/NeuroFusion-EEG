@@ -1,0 +1,91 @@
+{
+  "model_info": {
+    "name": "NeuroFusion-EEG Dual-Branch Model",
+    "version": "1.0.0",
+    "architecture": "DualBranch_LayerNorm",
+    "source": "Contrastive",
+    "export_date": "2026-02-01T14:40:12.737766",
+    "frozen": true
+  },
+  "input_specifications": {
+    "signal": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float32",
+      "description": "Raw EEG signal",
+      "length": 256,
+      "sampling_rate": 173.61,
+      "units": "microvolts (\u00b5V)",
+      "preprocessing": "Resampled to 256 samples if different length"
+    },
+    "features": {
+      "shape": [
+        30
+      ],
+      "dtype": "float32",
+      "description": "Handcrafted features",
+      "n_features": 30,
+      "normalization": "StandardScaler (fitted on training data)",
+      "extraction": "See feature_extraction.py"
+    }
+  },
+  "output_specifications": {
+    "classes": 3,
+    "class_names": [
+      "Class 0",
+      "Class 1",
+      "Class 2"
+    ],
+    "class_descriptions": {
+      "0": "Healthy / Normal",
+      "1": "Interictal / Abnormal non-seizure",
+      "2": "Ictal / Seizure"
+    },
+    "output_format": {
+      "logits": "Raw model outputs (3 values)",
+      "probabilities": "Softmax probabilities (sum to 1)",
+      "prediction": "Argmax of probabilities"
+    }
+  },
+  "performance": {
+    "within_dataset": {
+      "macro_f1": 0.2763,
+      "dataset": "Original training dataset"
+    },
+    "cross_dataset": {
+      "bonn_f1": 0.1566,
+      "retention": 0.567,
+      "note": "Performance may vary on different datasets"
+    }
+  },
+  "training_info": {
+    "n_samples": 96333,
+    "signal_shape": [
+      96333,
+      256
+    ],
+    "class_distribution": [
+      57677,
+      24157,
+      14499
+    ],
+    "signal_mean": 5.533881632464011,
+    "signal_std": 14.795249992882315
+  },
+  "requirements": {
+    "python": ">=3.8",
+    "pytorch": ">=1.10.0",
+    "numpy": ">=1.21.0",
+    "scipy": ">=1.7.0",
+    "scikit-learn": ">=1.0.0"
+  },
+  "notes": [
+    "Model is FROZEN - do not retrain",
+    "Use provided preprocessing pipeline",
+    "Input signals must be 256 samples long",
+    "Features must be normalized with provided scaler",
+    "Cross-dataset performance may be lower due to domain shift"
+  ]
+}

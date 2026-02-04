@@ -1,0 +1,62 @@
+{
+  "mode": "diagnostic_plain",
+  "config": {
+    "branch_a_depth": "medium",
+    "use_residual": true,
+    "use_bilstm": false,
+    "normalization": "group",
+    "num_groups": 8,
+    "dropout_strategy": "adaptive",
+    "base_dropout": 0.3,
+    "min_dropout": 0.1,
+    "loss_function": "weighted_ce",
+    "focal_gamma": 1.5,
+    "focal_alpha_scale": 1.5,
+    "max_epochs": 100,
+    "patience": 15,
+    "learning_rate": 0.0001,
+    "batch_size": 64,
+    "gradient_clip": 1.0,
+    "force_cpu": false
+  },
+  "test_accuracy": 0.30629757785467127,
+  "test_f1_macro": 0.28493712936310694,
+  "test_f1_weighted": 0.313693181635221,
+  "test_per_class_recall": [
+    0.236708275543227,
+    0.514490753519183,
+    0.23632183908045978
+  ],
+  "test_per_class_f1": [
+    0.3372859025032938,
+    0.33774234462764996,
+    0.17978314095837705
+  ],
+  "test_confusion_matrix": [
+    [
+      2048,
+      4451,
+      2153
+    ],
+    [
+      883,
+      1864,
+      876
+    ],
+    [
+      561,
+      1100,
+      514
+    ]
+  ],
+  "test_prediction_distribution": [
+    3492,
+    7415,
+    3543
+  ],
+  "all_classes_predicted": true,
+  "best_val_f1": 0.3361781182612609,
+  "total_epochs": 25,
+  "training_time_minutes": 80.65961916049322,
+  "total_parameters": 470563
+}

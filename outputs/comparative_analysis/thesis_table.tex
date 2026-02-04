@@ -1,0 +1,14 @@
+\begin{table}
+\caption{Comprehensive Comparison of All Experimental Approaches}
+\label{tab:comprehensive_comparison}
+\begin{tabular}{llll}
+\toprule
+Experiment & Macro F1 & All Classes Predicted & Key Insight \\
+\midrule
+Baseline (Weighted CE) & 0.2849 & Yes & Best raw F1, imbalance-driven \\
+SupCon + Balanced & 0.2763 & Yes & Best balance + representation quality \\
+Balanced Sampling & 0.2696 & Yes & Improved minority recall through sampling \\
+BiLSTM & 0.0872 & No & Temporal modeling failed (class collapse) \\
+\bottomrule
+\end{tabular}
+\end{table}

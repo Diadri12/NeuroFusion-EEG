@@ -1,0 +1,56 @@
+{
+  "approach": "Representation Learning with BiLSTM",
+  "config": {
+    "branch_a_depth": "medium",
+    "use_residual": true,
+    "use_bilstm": true,
+    "normalization": "group",
+    "num_groups": 8,
+    "dropout_strategy": "adaptive",
+    "base_dropout": 0.3,
+    "min_dropout": 0.1,
+    "loss_function": "focal",
+    "focal_gamma": 2.0,
+    "focal_alpha_scale": 1.5,
+    "max_epochs": 150,
+    "patience": 25,
+    "learning_rate": 5e-05,
+    "batch_size": 32,
+    "gradient_clip": 0.5,
+    "force_cpu": false
+  },
+  "test_accuracy": 0.15051903114186851,
+  "test_f1_macro": 0.08721804511278196,
+  "test_f1_weighted": 0.039383926945391154,
+  "test_per_class_recall": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "test_per_class_f1": [
+    0.0,
+    0.0,
+    0.26165413533834586
+  ],
+  "test_confusion_matrix": [
+    [
+      0,
+      0,
+      8652
+    ],
+    [
+      0,
+      0,
+      3623
+    ],
+    [
+      0,
+      0,
+      2175
+    ]
+  ],
+  "all_classes_predicted": false,
+  "total_epochs": 26,
+  "training_time_minutes": 82.84896270434062,
+  "total_parameters": 949155
+}
