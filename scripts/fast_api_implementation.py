@@ -4,6 +4,7 @@ Project: NeuroFusion-EEG
 Author: Diadri Weerasekera
 Year: 2025-2026
 """
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -20,6 +21,7 @@ from scipy.stats import entropy
 print("EpiGuard API - Starting")
 
 # MODEL ARCHITECTURE
+
 class BranchA_LayerNorm(nn.Module):
     def __init__(self, signal_length):
         super().__init__()
@@ -98,7 +100,7 @@ def extract_features(signal, fs=173.61):
         ('gamma', 30, 50)
     ]
 
-    for name, low, high in bands:
+    for _, low, high in bands:
         mask = (freqs >= low) & (freqs <= high)
         if np.any(mask):
             band_power = float(np.sum(psd[mask]))
@@ -124,7 +126,6 @@ def extract_features(signal, fs=173.61):
     spectral_entropy = float(entropy(np.abs(fft[:len(fft)//2]) + 1e-10))
     sample_entropy_proxy = float(np.std(signal))
     approx_entropy_proxy = float(np.std(np.diff(signal)))
-
     features.extend([spectral_entropy, sample_entropy_proxy, approx_entropy_proxy])
 
     # Hjorth parameters (3)
@@ -133,7 +134,6 @@ def extract_features(signal, fs=173.61):
     mobility = np.sqrt(np.var(diff1) / (activity + 1e-10))
     diff2 = np.diff(diff1)
     complexity = np.sqrt(np.var(diff2) / (np.var(diff1) + 1e-10)) / (mobility + 1e-10)
-
     features.extend([float(activity), float(mobility), float(complexity)])
 
     # Zero-crossing rate (1)
@@ -142,42 +142,41 @@ def extract_features(signal, fs=173.61):
 
     return np.array(features, dtype=np.float64)
 
-# LOAD MODEL AND SCALER
-# Path to deployment folder
-BASE_DIR = Path("/content/drive/MyDrive/Final Year/Final Year Project (2025 - 2026)/NeuroFusion-EEG")
+# PATHS AND DEVICE
+BASE_DIR = Path("E:/Diadri/IIT/Year 05 - PT/Final Year Project (FYP)/NeuroFusion-EEG")
 MODEL_DIR = BASE_DIR / "deployment" / "model"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-print(f"\n Loading model from: {MODEL_DIR}")
+print(f"\nLoading model from: {MODEL_DIR}")
 
-# Load model
+# LOAD MODEL SAFELY
+model = DualBranchModel(signal_length=256, n_features=30, n_classes=3).to(device)
 try:
-    model = DualBranchModel(signal_length=256, n_features=30, n_classes=3).to(device)
-    checkpoint = torch.load(MODEL_DIR / "model_weights.pt",map_location=device,weights_only=False)
+    with torch.serialization.safe_globals([torch.torch_version.TorchVersion]):
+        checkpoint = torch.load(MODEL_DIR / "model_weights.pt", map_location=device, weights_only=False)
     model.load_state_dict(checkpoint['model_state_dict'], strict=False)
     model.eval()
-    print(" Model loaded successfully!")
+    print("Model loaded successfully!")
 except Exception as e:
-    print(f" Failed to load model: {e}")
+    print(f"Failed to load model: {e}")
     exit(1)
 
-# Load scaler
+# LOAD SCALER
 try:
     scaler = joblib.load(MODEL_DIR / "feature_scaler.pkl")
-    print(" Scaler loaded successfully!")
+    print("Scaler loaded successfully!")
 except Exception as e:
-    print(f" Failed to load scaler: {e}")
+    print(f"Failed to load scaler: {e}")
     exit(1)
 
-# Load metadata
+# LOAD METADATA
 try:
     with open(MODEL_DIR / "model_metadata.json") as f:
         metadata = json.load(f)
-    print(" Metadata loaded successfully!")
+    print("Metadata loaded successfully!")
 except Exception as e:
-    print(f" Warning: Could not load metadata: {e}")
-    # Create default metadata
+    print(f"Warning: Could not load metadata: {e}")
     metadata = {
         "model_info": {"name": "NeuroFusion-EEG", "version": "1.0.0"},
         "output_specifications": {
@@ -190,9 +189,7 @@ except Exception as e:
         }
     }
 
-print(f" All components loaded!")
-print(f"   Device: {device}")
-print(f"   Model: {metadata['model_info']['name']}")
+print(f"All components loaded! Device: {device}")
 
 # FASTAPI APP
 app = FastAPI(
@@ -201,7 +198,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -210,7 +206,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#  REQUEST/RESPONSE MODELS
+# REQUEST/RESPONSE MODELS
 class PredictionRequest(BaseModel):
     signal: List[float]
     sampling_rate: Optional[float] = 173.61
@@ -222,19 +218,15 @@ class PredictionResponse(BaseModel):
 
 # HELPER FUNCTIONS
 def preprocess_signal(signal: np.ndarray, target_length: int = 256) -> np.ndarray:
-    """Resample signal to target length"""
     signal = np.array(signal, dtype=np.float64).flatten()
-
     if len(signal) > target_length:
         indices = np.linspace(0, len(signal)-1, target_length).astype(int)
         signal = signal[indices]
     elif len(signal) < target_length:
         signal = np.pad(signal, (0, target_length - len(signal)))
-
     return signal
 
 def validate_signal(signal: np.ndarray) -> tuple:
-    """Validate signal quality"""
     if len(signal) < 50:
         return False, "Signal too short (minimum 50 samples required)"
     if np.isnan(signal).any():
@@ -246,7 +238,6 @@ def validate_signal(signal: np.ndarray) -> tuple:
 # API ENDPOINTS
 @app.get("/")
 async def root():
-    """API health check"""
     return {
         "status": "running",
         "model": metadata['model_info']['name'],
@@ -260,7 +251,6 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Detailed health check"""
     return {
         "status": "healthy",
         "model_loaded": model is not None,
@@ -271,62 +261,35 @@ async def health_check():
 
 @app.get("/info")
 async def model_info():
-    """Get model information"""
     return metadata
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
-    """
-    Predict seizure from EEG signal
-
-    **Input:**
-    - signal: List of float values (EEG signal)
-    - sampling_rate: Optional, default 173.61 Hz
-
-    **Output:**
-    - prediction: Class and confidence
-    - probabilities: All class probabilities
-    - metadata: Processing info
-    """
     try:
         start_time = time.time()
 
-        # Convert to numpy array
         signal = np.array(request.signal, dtype=np.float64)
-
-        # Validate signal
         is_valid, error_msg = validate_signal(signal)
         if not is_valid:
             raise HTTPException(status_code=400, detail=error_msg)
 
-        # Preprocess signal
         signal_preprocessed = preprocess_signal(signal, target_length=256)
-
-        # Extract features
         features = extract_features(signal_preprocessed, fs=request.sampling_rate)
-
-        # Normalize features
         features_normalized = scaler.transform(features.reshape(1, -1))[0]
 
-        # Prepare tensors
         signal_tensor = torch.FloatTensor(signal_preprocessed).unsqueeze(0).unsqueeze(0).to(device)
         features_tensor = torch.FloatTensor(features_normalized).unsqueeze(0).to(device)
 
-        # Run inference
         with torch.no_grad():
             output = model(signal_tensor, features_tensor)
             probabilities = torch.softmax(output, dim=1)[0].cpu().numpy()
 
-        # Get prediction
         class_id = int(probabilities.argmax())
         class_names = metadata['output_specifications']['class_names']
         class_descriptions = metadata['output_specifications']['class_descriptions']
-
         confidence = float(probabilities[class_id])
-
         processing_time = (time.time() - start_time) * 1000  # ms
 
-        # Build response
         response = {
             "prediction": {
                 "class_id": class_id,
@@ -335,8 +298,7 @@ async def predict(request: PredictionRequest):
                 "confidence": confidence
             },
             "probabilities": {
-                class_names[i]: float(probabilities[i])
-                for i in range(len(class_names))
+                class_names[i]: float(probabilities[i]) for i in range(len(class_names))
             },
             "metadata": {
                 "processing_time_ms": processing_time,
@@ -353,3 +315,5 @@ async def predict(request: PredictionRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+
