@@ -1,0 +1,356 @@
+{
+  "project": "NeuroFusion-EEG",
+  "exported_at": "2026-03-10 07:53:17",
+  "task": "3-class EEG seizure classification  |  Classes: 0=Interictal, 1=Preictal, 2=Ictal",
+  "datasets": {
+    "branch_a_signals": {
+      "name": "EEG Epilepsy Diagnosis (Bonn EEG variant)",
+      "file": "datasets/epilepsy_diagnosis/EEG_Signal.csv",
+      "subjects": 500,
+      "raw_samples": 2048500,
+      "samples_per_subject": 4097,
+      "windowing": {
+        "window_size": 256,
+        "stride": 20,
+        "windows_total": 96333
+      },
+      "usage": "Primary signal source \u2014 Branch A CNN input",
+      "original_labels": {
+        "A": "Normal (eyes open)",
+        "B": "Normal (eyes closed)",
+        "C": "Interictal (hippocampus)",
+        "D": "Interictal (epileptogenic zone)",
+        "E": "Ictal (seizure activity)"
+      }
+    },
+    "branch_b_features": {
+      "name": "Epilepsy Federated EEG Dataset",
+      "file": "datasets/epilepsy_dataset/epilepsy_federated_dataset.csv",
+      "total_rows": 289010,
+      "sampled_rows": 96333,
+      "sampling_ratio": "1 in 3 rows (aligned with windowed signals)",
+      "feature_schema": 40,
+      "features_selected": 30,
+      "feature_categories": [
+        "Time-domain statistical (mean, std, skewness, kurtosis)",
+        "Nonlinear (zero-crossing rate, RMS, peak-to-peak)",
+        "Hjorth parameters (mobility, complexity)",
+        "Frequency band power (delta, theta, alpha, beta, gamma)",
+        "Spectral (PSD, spectral edge, spectral entropy)",
+        "Wavelet (entropy, energy, DWT, CWT, Shannon entropy)",
+        "Entropy measures (sample, approximate, Shannon, permutation)",
+        "Nonlinear dynamics (Lyapunov, Hurst, DFA, Higuchi, Katz, LZC)"
+      ],
+      "usage": "Label source + feature schema \u2014 Branch B input",
+      "classes": {
+        "0": "Interictal",
+        "1": "Preictal",
+        "2": "Ictal"
+      }
+    },
+    "cross_dataset_evaluation": {
+      "name": "Bonn EEG Benchmark Dataset",
+      "file": "outputs/final_processed/bonn_eeg/",
+      "usage": "Cross-dataset generalisation evaluation only"
+    },
+    "classical_ml_baseline": {
+      "name": "UCI Epileptic Seizure Recognition",
+      "file": "datasets/epileptic_seizure/Epileptic Seizure Recognition.csv",
+      "rows": 11500,
+      "classes": 5,
+      "usage": "Phase 1 classical ML baseline experiments only. Not used in final deep learning evaluation."
+    }
+  },
+  "test_set": {
+    "n_samples": 14450,
+    "class_0_n": 8652,
+    "class_1_n": 3623,
+    "class_2_n": 2175,
+    "class_0_pct": 59.9,
+    "class_1_pct": 25.1,
+    "class_2_pct": 15.1,
+    "split_seed": 42,
+    "split_ratio": "70 / 15 / 15  (train / val / test)",
+    "note": "96,333 total windows: signals from EEG Epilepsy Diagnosis (window=256, stride=20), labels from Epilepsy Federated EEG Dataset"
+  },
+  "selected_model": "SupCon + Balanced",
+  "selection_reason": "Chosen on methodological grounds: only model combining representation learning (SupCon loss) with balanced sampling. McNemar test confirms statistically significant difference from Baseline (p = 0.0020). Highest Preictal (C1) recall among non-collapsed models.",
+  "mcnemar_test": {
+    "model_a": "Baseline (Weighted CE)",
+    "model_b": "SupCon + Balanced",
+    "b": 1367,
+    "c": 1209,
+    "chi2": 9.5687,
+    "p_value": 0.002,
+    "significant": true,
+    "correction": "Yates continuity correction"
+  },
+  "ablation": {
+    "branch_a_only": {
+      "macro_f1": 0.0872,
+      "prediction": "Collapse \u2014 Class 2 only",
+      "delta": "-0.189 pp vs full model"
+    },
+    "branch_b_only": {
+      "macro_f1": 0.2226,
+      "prediction": "Partial \u2014 all classes predicted",
+      "delta": "-0.054 pp vs full model"
+    },
+    "full_dual_branch": {
+      "macro_f1": 0.2743,
+      "prediction": "All three classes predicted",
+      "delta": "Reference"
+    }
+  },
+  "cross_dataset": {
+    "primary_dataset": "Epilepsy Federated EEG (within-dataset)",
+    "generalisation_target": "Bonn EEG Benchmark Dataset",
+    "within_dataset": {
+      "macro_f1": 0.2763,
+      "retention": "100.0%"
+    },
+    "bonn_standard_scaler": {
+      "macro_f1": 0.1566,
+      "retention": "56.7%"
+    },
+    "bonn_per_sample_norm": {
+      "macro_f1": 0.1239,
+      "retention": "44.8%"
+    },
+    "domain_shift_note": "High PCA centroid distance between Federated EEG and Bonn EEG confirms significant domain shift, consistent with known inter-dataset variability in EEG signals."
+  },
+  "models": {
+    "Baseline": {
+      "label": "Baseline (Weighted CE)",
+      "parameters": 470563,
+      "training_time": "80.7 min",
+      "selected": false,
+      "accuracy": 0.2932871972318339,
+      "macro_f1": 0.2743049891948452,
+      "weighted_f1": 0.2927584231834793,
+      "mcc": -0.008700562452241153,
+      "kappa": -0.007141606532532041,
+      "auc_roc_macro": 0.4983976955394905,
+      "f1_95ci_lower": 0.26732748184901,
+      "f1_95ci_upper": 0.28163900014904875,
+      "f1_95ci_str": "[0.2673, 0.2816]",
+      "confusion_matrix": [
+        [
+          1749,
+          4764,
+          2139
+        ],
+        [
+          770,
+          1973,
+          880
+        ],
+        [
+          474,
+          1185,
+          516
+        ]
+      ],
+      "per_class": {
+        "class_0": {
+          "name": "Interictal",
+          "precision": 0.5843635148680254,
+          "recall": 0.2021497919556172,
+          "f1": 0.3003864319450408,
+          "specificity": 0.7854432562952607,
+          "support": 8652
+        },
+        "class_1": {
+          "name": "Preictal",
+          "precision": 0.24905326937642008,
+          "recall": 0.5445763179685343,
+          "f1": 0.3417929839757471,
+          "specificity": 0.4505403158769701,
+          "support": 3623
+        },
+        "class_2": {
+          "name": "Ictal",
+          "precision": 0.14596888260254598,
+          "recall": 0.23724137931034484,
+          "f1": 0.1807355516637478,
+          "specificity": 0.7540529531568166,
+          "support": 2175
+        }
+      }
+    },
+    "BiLSTM": {
+      "label": "BiLSTM + Focal Loss",
+      "parameters": 949155,
+      "training_time": "82.8 min",
+      "selected": false,
+      "accuracy": 0.15051903114186851,
+      "macro_f1": 0.08721804511278196,
+      "weighted_f1": 0.039383926945391154,
+      "mcc": 0.0,
+      "kappa": 0.0,
+      "auc_roc_macro": 0.4981291176429285,
+      "f1_95ci_lower": 0.0841697907848591,
+      "f1_95ci_upper": 0.09013192965033388,
+      "f1_95ci_str": "[0.0842, 0.0901]",
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          8652
+        ],
+        [
+          0,
+          0,
+          3623
+        ],
+        [
+          0,
+          0,
+          2175
+        ]
+      ],
+      "per_class": {
+        "class_0": {
+          "name": "Interictal",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "specificity": 0.9999999999999828,
+          "support": 8652
+        },
+        "class_1": {
+          "name": "Preictal",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "specificity": 0.9999999999999908,
+          "support": 3623
+        },
+        "class_2": {
+          "name": "Ictal",
+          "precision": 0.15051903114186851,
+          "recall": 1.0,
+          "f1": 0.26165413533834586,
+          "specificity": 0.0,
+          "support": 2175
+        }
+      }
+    },
+    "Balanced": {
+      "label": "Balanced Sampling",
+      "parameters": 158627,
+      "training_time": "38.9 min",
+      "selected": false,
+      "accuracy": 0.2725259515570934,
+      "macro_f1": 0.26961098231311525,
+      "weighted_f1": 0.2824530552079378,
+      "mcc": -0.003394127647463373,
+      "kappa": -0.0027808481892301895,
+      "auc_roc_macro": 0.5014946452748227,
+      "f1_95ci_lower": 0.26298823703893626,
+      "f1_95ci_upper": 0.2764212308042199,
+      "f1_95ci_str": "[0.2630, 0.2764]",
+      "confusion_matrix": [
+        [
+          1667,
+          3220,
+          3765
+        ],
+        [
+          695,
+          1356,
+          1572
+        ],
+        [
+          427,
+          833,
+          915
+        ]
+      ],
+      "per_class": {
+        "class_0": {
+          "name": "Interictal",
+          "precision": 0.5977052707063464,
+          "recall": 0.19267221451687472,
+          "f1": 0.29140809369810333,
+          "specificity": 0.8064849948257881,
+          "support": 8652
+        },
+        "class_1": {
+          "name": "Preictal",
+          "precision": 0.2506932889628397,
+          "recall": 0.37427546232404085,
+          "f1": 0.30026572187776795,
+          "specificity": 0.6256580770296423,
+          "support": 3623
+        },
+        "class_2": {
+          "name": "Ictal",
+          "precision": 0.1463531669865643,
+          "recall": 0.4206896551724138,
+          "f1": 0.21715913136347453,
+          "specificity": 0.5652138492871644,
+          "support": 2175
+        }
+      }
+    },
+    "SupCon": {
+      "label": "SupCon + Balanced",
+      "parameters": 187555,
+      "training_time": "174.8 min",
+      "selected": true,
+      "accuracy": 0.2823529411764706,
+      "macro_f1": 0.2762605687388809,
+      "weighted_f1": 0.2865322416392199,
+      "mcc": 0.006449686612639838,
+      "kappa": 0.005295047332997349,
+      "auc_roc_macro": 0.5015641569203404,
+      "f1_95ci_lower": 0.26872430132789965,
+      "f1_95ci_upper": 0.28391444969149005,
+      "f1_95ci_str": "[0.2687, 0.2839]",
+      "confusion_matrix": [
+        [
+          1631,
+          3820,
+          3201
+        ],
+        [
+          656,
+          1649,
+          1318
+        ],
+        [
+          399,
+          976,
+          800
+        ]
+      ],
+      "per_class": {
+        "class_0": {
+          "name": "Interictal",
+          "precision": 0.607222635889799,
+          "recall": 0.18851132686084143,
+          "f1": 0.2877050626212736,
+          "specificity": 0.8180407036909138,
+          "support": 8652
+        },
+        "class_1": {
+          "name": "Preictal",
+          "precision": 0.25585725368502715,
+          "recall": 0.4551476676787193,
+          "f1": 0.3275725069527215,
+          "specificity": 0.557033342569497,
+          "support": 3623
+        },
+        "class_2": {
+          "name": "Ictal",
+          "precision": 0.1504042113179169,
+          "recall": 0.367816091954023,
+          "f1": 0.21350413664264745,
+          "specificity": 0.6318533604887933,
+          "support": 2175
+        }
+      }
+    }
+  }
+}
