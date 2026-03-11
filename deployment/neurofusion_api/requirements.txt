@@ -6,4 +6,4 @@ pandas==2.2.2
 scikit-learn==1.5.0
 joblib==1.4.2
 PyWavelets==1.6.0
-python-multipart==0.09
+python-multipart==0.0.9
