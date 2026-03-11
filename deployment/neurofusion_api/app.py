@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 # Config
 MODEL_PATH  = os.getenv("MODEL_PATH",  "final_model.pt")
@@ -259,7 +260,11 @@ def extract_features(window: np.ndarray) -> np.ndarray:
 # LOAD MODEL AT STARTUP
 
 print("Loading NeuroFusion-EEG model")
-scaler     = joblib.load(SCALER_PATH)
+scaler = StandardScaler()
+scaler.mean_          = np.load(os.path.join(os.path.dirname(__file__), "scaler_mean.npy"))
+scaler.scale_         = np.load(os.path.join(os.path.dirname(__file__), "scaler_scale.npy"))
+scaler.var_           = scaler.scale_ ** 2
+scaler.n_features_in_ = len(scaler.mean_)
 model      = DualBranchContrastive(
     signal_length=256, n_features=30, n_classes=3,
     norm_type="group", num_groups=8, projection_dim=128)
