@@ -1,0 +1,325 @@
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+  SafeAreaView,
+  ScrollView,
+  Animated,
+} from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { auth } from '../../src/config/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
+const HISTORY_ITEMS = [
+  { id: '1', date: '12/03/2026', result: 'No Seizure',       type: 'safe',     conf: 87 },
+  { id: '2', date: '18/01/2026', result: 'Seizure Detected', type: 'seizure',  conf: 92 },
+  { id: '3', date: '07/01/2026', result: 'Preictal',         type: 'preictal', conf: 71 },
+];
+
+const STATS = [
+  { label: 'Total Scans', value: '47', icon: 'lightning-bolt' },
+  { label: 'This Week',   value: '3',  icon: 'chart-line'     },
+  { label: 'Streak Days', value: '12', icon: 'fire'           },
+];
+
+
+const DashboardScreen = ({ onNavigateToAnalyze }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnims = useRef([
+    new Animated.Value(30),
+    new Animated.Value(30),
+    new Animated.Value(30),
+    new Animated.Value(30),
+  ]).current;
+
+  const [expandedHistory, setExpandedHistory] = useState(null);
+  const [displayName, setDisplayName] = useState('');
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      ...slideAnims.map((anim, index) =>
+        Animated.spring(anim, {
+          toValue: 0,
+          delay: index * 100,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        })
+      ),
+    ]).start();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user?.displayName) {
+        setDisplayName(user.displayName);
+      } else if (user?.email) {
+        setDisplayName(user.email.split("@")[0]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const getHistoryStyle = (type) => {
+    if (type === 'seizure')  return { color: '#E63946', bg: '#FEE2E2', icon: 'alert-circle'   };
+    if (type === 'preictal') return { color: '#F59E0B', bg: '#FEF3C7', icon: 'lightning-bolt' };
+    return                          { color: '#4CAF50', bg: '#D1FAE5', icon: 'check-circle'   };
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+
+        {/* Header — unchanged */}
+        <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
+          <View style={styles.statusBar}>
+            <Text style={styles.time}>10:00</Text>
+            <View style={styles.statusIcons}>
+              <MaterialCommunityIcons name="signal"  size={16} color="#FFF" />
+              <MaterialCommunityIcons name="wifi"    size={16} color="#FFF" style={{ marginLeft: 4 }} />
+              <MaterialCommunityIcons name="battery" size={16} color="#FFF" style={{ marginLeft: 4 }} />
+            </View>
+          </View>
+          <View style={styles.userSection}>
+            <View style={styles.avatarLarge}>
+              <MaterialCommunityIcons name="account" size={40} color="#B844FF" />
+            </View>
+            <Text style={styles.welcomeTextLarge}>Welcome Back, {displayName}</Text>
+          </View>
+        </Animated.View>
+
+        {/* Model Status Card — unchanged */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnims[0] }] }}>
+          <View style={styles.statusCard}>
+            <Text style={styles.statusLabel}>Model Status: </Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusBadgeText}>READY</Text>
+            </View>
+          </View>
+        </Animated.View>
+
+        {/* NEW — Stats Row */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnims[0] }] }}>
+          <View style={styles.statsRow}>
+            {STATS.map(s => (
+              <View key={s.label} style={styles.statCard}>
+                <MaterialCommunityIcons name={s.icon} size={20} color="#B844FF" />
+                <Text style={styles.statValue}>{s.value}</Text>
+                <Text style={styles.statLabel}>{s.label}</Text>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+
+        {/* Analyze EEG Data Card — unchanged */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnims[1] }] }}>
+          <TouchableOpacity
+            style={styles.analyzeCard}
+            onPress={onNavigateToAnalyze}
+            activeOpacity={0.8}
+          >
+            <View style={styles.analyzeHeader}>
+              <MaterialCommunityIcons name="file-chart" size={32} color="#B844FF" />
+              <Text style={styles.analyzeTitle}>Analyze EEG Data</Text>
+            </View>
+            <Text style={styles.analyzeDescription}>
+              Upload EEG files for seizure detection analysis
+            </Text>
+            <View style={styles.analyzeButton}>
+              <Text style={styles.analyzeButtonText}>Start Analysis</Text>
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* NEW — Last Result Card */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnims[2] }] }}>
+          <View style={styles.lastResultCard}>
+            <View style={styles.lastResultHeader}>
+              <MaterialCommunityIcons name="check-circle" size={22} color="#4CAF50" />
+              <Text style={styles.lastResultTitle}>Last Result</Text>
+            </View>
+            <View style={styles.lastResultBody}>
+              <View>
+                <Text style={styles.lastResultValue}>No Seizure</Text>
+                <Text style={styles.lastResultMeta}>12 Mar 2026 · 09:14</Text>
+              </View>
+              <View style={styles.confBadge}>
+                <Text style={styles.confBadgeText}>87% conf</Text>
+              </View>
+            </View>
+          </View>
+        </Animated.View>
+
+        {/* History Card — now interactive */}
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnims[3] }] }}>
+          <View style={styles.historyCard}>
+            <View style={styles.historyHeader}>
+              <MaterialCommunityIcons name="history" size={28} color="#B844FF" />
+              <Text style={styles.historyTitle}>History</Text>
+            </View>
+
+            {HISTORY_ITEMS.map((item, index) => {
+              const hs         = getHistoryStyle(item.type);
+              const isExpanded = expandedHistory === item.id;
+
+              return (
+                <View key={item.id}>
+                  {index > 0 && <View style={styles.historyDivider} />}
+
+                  <TouchableOpacity
+                    onPress={() => setExpandedHistory(prev => prev === item.id ? null : item.id)}
+                    activeOpacity={0.75}
+                    style={styles.historyRow}
+                  >
+                    <View style={[styles.historyIcon, { backgroundColor: hs.bg }]}>
+                      <MaterialCommunityIcons name={hs.icon} size={18} color={hs.color} />
+                    </View>
+                    <View style={styles.historyInfo}>
+                      <Text style={styles.historyDate}>Date: {item.date}</Text>
+                      <Text style={[styles.historyResult, { color: hs.color }]}>
+                        Seizure: {item.result}
+                      </Text>
+                    </View>
+                    <MaterialCommunityIcons
+                      name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color="#B844FF"
+                    />
+                  </TouchableOpacity>
+
+                  {/* Expanded confidence bar */}
+                  {isExpanded && (
+                    <View style={styles.historyExpanded}>
+                      <Text style={styles.confLabel}>Confidence</Text>
+                      <View style={styles.confBarBg}>
+                        <View style={[
+                          styles.confBarFill,
+                          { width: `${item.conf}%`, backgroundColor: hs.color },
+                        ]} />
+                      </View>
+                      <Text style={styles.confPercent}>{item.conf}%</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
+
+            <TouchableOpacity style={styles.viewHistoryButton}>
+              <Text style={styles.viewHistoryText}>View Full History</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  // ── All original styles unchanged ──
+  container:  { flex: 1, backgroundColor: '#B844FF' },
+  scrollView: { flex: 1 },
+  header: {
+    backgroundColor: '#B844FF',
+    paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24,
+  },
+  statusBar: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    alignItems: 'center', marginBottom: 20,
+  },
+  time:        { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
+  statusIcons: { flexDirection: 'row', alignItems: 'center' },
+  userSection: { alignItems: 'center' },
+  avatarLarge: {
+    width: 70, height: 70, borderRadius: 35,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center', alignItems: 'center', marginBottom: 12,
+  },
+  welcomeTextLarge: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
+  statusCard: {
+    backgroundColor: '#E8D5FF',
+    marginHorizontal: 20, marginBottom: 16,
+    padding: 20, borderRadius: 16,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+  },
+  statusLabel:     { fontSize: 16, fontWeight: '600', color: '#333' },
+  statusBadge:     { backgroundColor: '#4CAF50', paddingHorizontal: 16, paddingVertical: 6, borderRadius: 12 },
+  statusBadgeText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 14 },
+  analyzeCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20, marginBottom: 16, padding: 20, borderRadius: 16,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, shadowRadius: 8, elevation: 3,
+  },
+  analyzeHeader:      { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  analyzeTitle:       { fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 12 },
+  analyzeDescription: { fontSize: 14, color: '#666', marginBottom: 16, lineHeight: 20 },
+  analyzeButton:      { backgroundColor: '#B844FF', paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
+  analyzeButtonText:  { color: '#FFFFFF', fontWeight: '600', fontSize: 16 },
+  historyCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20, marginBottom: 100, padding: 20, borderRadius: 16,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, shadowRadius: 8, elevation: 3,
+  },
+  historyHeader:  { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  historyTitle:   { fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 12 },
+  historyDivider: { height: 1, backgroundColor: '#E0E0E0', marginVertical: 8 },
+  viewHistoryButton: {
+    marginTop: 16, paddingVertical: 12, alignItems: 'center',
+    borderWidth: 1, borderColor: '#B844FF', borderRadius: 12,
+  },
+  viewHistoryText: { color: '#B844FF', fontWeight: '600', fontSize: 16 },
+
+  // ── NEW styles only ──
+  statsRow: {
+    flexDirection: 'row',
+    marginHorizontal: 20, marginBottom: 16, gap: 8,
+  },
+  statCard: {
+    flex: 1, backgroundColor: '#FFFFFF', borderRadius: 14, paddingVertical: 14,
+    alignItems: 'center', gap: 5,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08, shadowRadius: 6, elevation: 2,
+  },
+  statValue: { fontSize: 20, fontWeight: '800', color: '#3B0764' },
+  statLabel: { fontSize: 9, color: '#9CA3AF', textAlign: 'center' },
+
+  lastResultCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20, marginBottom: 16, padding: 16, borderRadius: 16,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08, shadowRadius: 6, elevation: 2,
+  },
+  lastResultHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+  lastResultTitle:  { fontSize: 14, fontWeight: '700', color: '#333' },
+  lastResultBody:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  lastResultValue:  { fontSize: 16, fontWeight: '800', color: '#4CAF50' },
+  lastResultMeta:   { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
+  confBadge:        { backgroundColor: '#D1FAE5', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
+  confBadgeText:    { fontSize: 11, fontWeight: '700', color: '#4CAF50' },
+
+  historyRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 },
+  historyIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  historyInfo:   { flex: 1 },
+  historyDate:   { fontSize: 14, color: '#333', fontWeight: '600', marginBottom: 2 },
+  historyResult: { fontSize: 14, fontWeight: '600' },
+
+  historyExpanded: { backgroundColor: '#F5F3FF', borderRadius: 10, padding: 12, marginBottom: 4 },
+  confLabel:  { fontSize: 11, color: '#6B7280', marginBottom: 6 },
+  confBarBg:  { height: 6, backgroundColor: '#E0E0E0', borderRadius: 6, overflow: 'hidden', marginBottom: 4 },
+  confBarFill: { height: '100%', borderRadius: 6 },
+  confPercent: { fontSize: 12, fontWeight: '700', color: '#333' },
+});
+
+export default DashboardScreen;
