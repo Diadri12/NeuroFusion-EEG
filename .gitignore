@@ -1,0 +1,4 @@
+venv/
+venv_phase01/
+__pycache__/
+*.pyc
