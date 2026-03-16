@@ -354,7 +354,7 @@ def compute_overall_status(class_counts: dict, n_windows: int) -> dict:
             "advice"  : "Immediate medical attention recommended. "
                         "Please contact your healthcare provider.",
         }
-    elif preictal_pct > 0.2:
+    elif preictal_pct > 0.3:
         return {
             "status"  : "Preictal activity detected — early warning",
             "colour"  : "orange",
