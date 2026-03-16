@@ -104,7 +104,7 @@ class DualBranchContrastive(nn.Module):
         return self.classifier(fused)
  
  
-# Feature Extraction (optimised — O(N) only)
+# Feature Extraction
  
 def extract_features(window: np.ndarray) -> np.ndarray:
     x   = window.astype(np.float64)
@@ -171,7 +171,7 @@ def extract_features(window: np.ndarray) -> np.ndarray:
     hist        = hist / (hist.sum() + eps)
     shannon_ent = float(-np.sum(hist * np.log2(hist + eps)))
  
-    # Permutation entropy (O(N) — kept, fast)
+    # Permutation entropy (O(N))
     def permutation_entropy(sig, order=3, delay=1):
         perms = {}
         for i in range(len(sig) - (order - 1) * delay):
@@ -369,7 +369,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins     = ["*"],
-    allow_credentials = True,
+    allow_credentials = False,
     allow_methods     = ["*"],
     allow_headers     = ["*"],
 )
