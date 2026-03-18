@@ -32,8 +32,8 @@ export default function RootLayout() {
         <Stack.Screen name="analyzing" />
         <Stack.Screen name="no-seizure-detected" />
         <Stack.Screen name="seizure-detected" />
-        <Stack.Screen name="about-app" />
-        <Stack.Screen name="user-information" />
+        <Stack.Screen name="aboutApp" />
+        <Stack.Screen name="userInformation" />
       </Stack>
     </>
   );

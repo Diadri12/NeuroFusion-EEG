@@ -1,21 +1,24 @@
 import { useRouter } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../src/config/firebase';
 import SettingsScreen from '../../src/screens/SettingsScreen';
-
+ 
 export default function Settings() {
   const router = useRouter();
-
-  const navigation = {
-    goBack: () => router.back(),
-    navigate: (screen: string) => {
-      if (screen === 'AboutApp') {
-        router.push('/aboutApp');
-      } else if (screen === 'UserInformation') {
-        router.push('./user-information');
-      } else if (screen === 'Login') {
-        router.replace('/login');
-      }
-    },
+ 
+  const handleSignOut = async () => {
+    await signOut(auth);
   };
-
-  return <SettingsScreen/>;
+ 
+  const handleNavigate = (screen: string) => {
+    if (screen === 'userInformation') router.push('/userInformation');
+    if (screen === 'aboutApp')        router.push('/aboutApp');
+  };
+ 
+  return (
+    <SettingsScreen
+      onSignOut={handleSignOut}
+      onNavigate={handleNavigate}
+    />
+  );
 }
