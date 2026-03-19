@@ -5,9 +5,8 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import axios from 'axios';
  
-// Railway API
+// ── Railway API ───────────────────────────────────────────────────────────────
 const API_URL = 'https://neurofusion-eeg-production.up.railway.app/predict/csv';
  
 const SUPPORTED_TYPES = ['.csv', '.txt', '.mat', '.edf', '.xls', '.xlsx'];
@@ -19,12 +18,12 @@ const STEPS = [
   { label: 'Generating Results',  icon: 'check-circle'       },
 ];
  
-// Component
+// ── Component ─────────────────────────────────────────────────────────────────
 const AnalyzingScreen = ({ fileUri, fileType }) => {
   const router = useRouter();
  
   const [currentStep, setCurrentStep] = useState(0);
-  const [statusMsg,   setStatusMsg]   = useState('Preparing your file');
+  const [statusMsg,   setStatusMsg]   = useState('Preparing your file...');
  
   // Animations
   const fadeAnim    = useRef(new Animated.Value(0)).current;
@@ -90,7 +89,7 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     setStatusMsg(msg);
   };
  
-  // Main analysis flow
+  // ── Main analysis flow ────────────────────────────────────────────────────
   const startAnalysis = async () => {
     // Resolve filename and extension
     let name      = fileUri.split('/').pop() || 'uploaded_file';
@@ -122,8 +121,8 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
  
   const analyzeFile = async (fileName, extension) => {
     try {
-      // Load
-      advanceStep(0, 'Loading your EEG file');
+      // Step 0 — load
+      advanceStep(0, 'Loading your EEG file...');
  
       const formData = new FormData();
  
@@ -141,35 +140,40 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
  
       await new Promise(r => setTimeout(r, 300));
  
-      // Features
-      advanceStep(1, 'Extracting EEG features');
+      // Step 1 — features
+      advanceStep(1, 'Extracting EEG features...');
       await new Promise(r => setTimeout(r, 300));
  
-      // Model call
-      advanceStep(2, 'Running NeuroFusion model');
+      // Step 2 — model call (use fetch on web, axios on native)
+      advanceStep(2, 'Running NeuroFusion model...');
  
-      let data;
-      if (Platform.OS === 'web') {
-        const fetchResp = await fetch(API_URL, { method: 'POST', body: formData });
-        if (!fetchResp.ok) {
-          const e = await fetchResp.json().catch(() => ({}));
-          Alert.alert('Analysis Failed', e?.detail || 'Server error. Please try again.');
-          router.back();
-          return;
-        }
-        data = await fetchResp.json();
-      } else {
-        const response = await axios.post(API_URL, formData, { timeout: 120000, validateStatus: () => true });
-        if (response.status !== 200) {
-          Alert.alert('Analysis Failed', response.data?.detail || 'Server error. Please try again.');
-          router.back();
-          return;
-        }
-        data = response.data;
+      // Use fetch on both web and native — more reliable for multipart FormData
+      let fetchResp;
+      try {
+        fetchResp = await fetch(API_URL, {
+          method: 'POST',
+          body: formData,
+          headers: Platform.OS === 'web' ? {} : {
+            'Accept': 'application/json',
+          },
+        });
+      } catch (fetchErr) {
+        console.error('Fetch error:', fetchErr);
+        Alert.alert('Network Error', 'Could not reach the server. Please check your internet connection and try again.');
+        router.back();
+        return;
       }
  
-      // Results
-      advanceStep(3, 'Generating results');
+      if (!fetchResp.ok) {
+        const e = await fetchResp.json().catch(() => ({}));
+        Alert.alert('Analysis Failed', e?.detail || `Server error (${fetchResp.status}). Please try again.`);
+        router.back();
+        return;
+      }
+      const data = await fetchResp.json();
+ 
+      // Step 3 — results
+      advanceStep(3, 'Generating results...');
       await new Promise(r => setTimeout(r, 400));
       const urgency    = data.overall_urgency;   // 'critical' | 'high' | 'low'
       const isSeizure  = urgency === 'critical';
@@ -192,7 +196,7 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
         ictal_count        : String(data.class_distribution?.Ictal?.count      ?? 0),
       };
  
-      // Route to correct result screen
+      // ── Route to correct result screen ──────────────────────────────────
       if (isSeizure) {
         router.replace({ pathname: '/seizure-detected',    params });
       } else {
@@ -209,13 +213,13 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     }
   };
  
-  // Progress bar interpolation
+  // ── Progress bar interpolation ────────────────────────────────────────────
   const progressWidth = progressAnim.interpolate({
     inputRange:  [0, 1],
     outputRange: ['0%', '100%'],
   });
  
-  // Render
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
@@ -315,7 +319,7 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
   );
 };
  
-// Styles
+// ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#B844FF' },
   content:   { flex: 1, padding: 24, justifyContent: 'center' },
