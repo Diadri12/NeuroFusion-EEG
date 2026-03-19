@@ -6,8 +6,10 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
  
-// ── Railway API ───────────────────────────────────────────────────────────────
-const API_URL = 'https://neurofusion-eeg-production.up.railway.app/predict/csv';
+// Railway API
+const API_URL    = 'https://neurofusion-eeg-production.up.railway.app/predict/csv';
+const HEALTH_URL = 'https://neurofusion-eeg-production.up.railway.app/health';
+const TIMEOUT_MS = 120000; // 2 minutes
  
 const SUPPORTED_TYPES = ['.csv', '.txt', '.mat', '.edf', '.xls', '.xlsx'];
  
@@ -18,14 +20,25 @@ const STEPS = [
   { label: 'Generating Results',  icon: 'check-circle'       },
 ];
  
-// ── Component ─────────────────────────────────────────────────────────────────
+// Fetch with timeout
+const fetchWithTimeout = async (url, options = {}, timeoutMs = TIMEOUT_MS) => {
+  const controller = new AbortController();
+  const timer      = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(timer);
+  }
+};
+ 
+// Component
 const AnalyzingScreen = ({ fileUri, fileType }) => {
   const router = useRouter();
  
   const [currentStep, setCurrentStep] = useState(0);
-  const [statusMsg,   setStatusMsg]   = useState('Preparing your file...');
+  const [statusMsg,   setStatusMsg]   = useState('Preparing your file');
  
-  // Animations
   const fadeAnim    = useRef(new Animated.Value(0)).current;
   const pulseAnim   = useRef(new Animated.Value(1)).current;
   const ring1       = useRef(new Animated.Value(1)).current;
@@ -34,12 +47,9 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
   const progressAnim= useRef(new Animated.Value(0)).current;
   const stepAnims   = useRef(STEPS.map(() => new Animated.Value(0))).current;
  
-  // ── Mount: start animations then analysis ──
   useEffect(() => {
-    // Fade in
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
  
-    // Brain pulse
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.12, duration: 900, useNativeDriver: true }),
@@ -47,7 +57,6 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
       ])
     ).start();
  
-    // Ripple rings
     const ripple = (anim, delay) =>
       Animated.loop(
         Animated.sequence([
@@ -60,14 +69,12 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     ripple(ring2, 450);
     ripple(ring3, 900);
  
-    // Stagger step rows in
     Animated.stagger(150,
       stepAnims.map(a =>
         Animated.spring(a, { toValue: 1, friction: 7, tension: 50, useNativeDriver: true })
       )
     ).start();
  
-    // Start analysis after short delay so UI renders first
     const timer = setTimeout(() => {
       if (fileUri) startAnalysis();
     }, 600);
@@ -75,7 +82,6 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     return () => clearTimeout(timer);
   }, []);
  
-  // Animate progress bar on step change
   useEffect(() => {
     Animated.timing(progressAnim, {
       toValue: (currentStep + 1) / STEPS.length,
@@ -89,9 +95,7 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     setStatusMsg(msg);
   };
  
-  // ── Main analysis flow ────────────────────────────────────────────────────
   const startAnalysis = async () => {
-    // Resolve filename and extension
     let name      = fileUri.split('/').pop() || 'uploaded_file';
     let extension;
  
@@ -121,9 +125,15 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
  
   const analyzeFile = async (fileName, extension) => {
     try {
-      // Step 0 — load
-      advanceStep(0, 'Loading your EEG file...');
+      // Warm up server
+      advanceStep(0, 'Connecting to server');
+      try {
+        await fetchWithTimeout(HEALTH_URL, { method: 'GET' }, 30000);
+      } catch (_) {
+      }
  
+      // Load file
+      advanceStep(0, 'Loading your EEG file');
       const formData = new FormData();
  
       if (Platform.OS === 'web') {
@@ -134,32 +144,36 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
         formData.append('file', {
           uri:  fileUri,
           name: fileName,
-          type: 'application/octet-stream',
+          type: 'text/csv',
         });
       }
  
       await new Promise(r => setTimeout(r, 300));
  
-      // Step 1 — features
-      advanceStep(1, 'Extracting EEG features...');
+      // Features
+      advanceStep(1, 'Extracting EEG features');
       await new Promise(r => setTimeout(r, 300));
  
-      // Step 2 — model call (use fetch on web, axios on native)
-      advanceStep(2, 'Running NeuroFusion model...');
+      // Model
+      advanceStep(2, 'Running EpiGuard model');
  
-      // Use fetch on both web and native — more reliable for multipart FormData
       let fetchResp;
       try {
-        fetchResp = await fetch(API_URL, {
-          method: 'POST',
-          body: formData,
-          headers: Platform.OS === 'web' ? {} : {
-            'Accept': 'application/json',
+        fetchResp = await fetchWithTimeout(
+          API_URL,
+          {
+            method: 'POST',
+            body:   formData,
+            headers: Platform.OS === 'web' ? {} : { 'Accept': 'application/json' },
           },
-        });
+          TIMEOUT_MS
+        );
       } catch (fetchErr) {
-        console.error('Fetch error:', fetchErr);
-        Alert.alert('Network Error', 'Could not reach the server. Please check your internet connection and try again.');
+        if (fetchErr.name === 'AbortError') {
+          Alert.alert('Timeout', 'The server took too long to respond. Please try again.');
+        } else {
+          Alert.alert('Network Error', 'Could not reach the server. Please check your internet connection and try again.');
+        }
         router.back();
         return;
       }
@@ -170,33 +184,33 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
         router.back();
         return;
       }
+ 
       const data = await fetchResp.json();
  
-      // Step 3 — results
-      advanceStep(3, 'Generating results...');
+      // Results
+      advanceStep(3, 'Generating results');
       await new Promise(r => setTimeout(r, 400));
-      const urgency    = data.overall_urgency;   // 'critical' | 'high' | 'low'
-      const isSeizure  = urgency === 'critical';
  
-      // Build params to pass to result screens
+      const urgency   = data.overall_urgency;
+      const isSeizure = urgency === 'critical';
+ 
       const params = {
-        overall_urgency    : urgency,
-        overall_status     : data.overall_status,
-        overall_colour     : data.overall_colour,
-        advice             : data.advice,
-        total_windows      : String(data.total_windows ?? 0),
-        time_taken_sec     : String(data.time_taken_sec ?? 0),
-        file_name          : data.file_name ?? fileName,
-        dominant_label     : data.dominant_prediction?.label ?? '',
-        interictal_pct     : String(data.class_distribution?.Interictal?.pct  ?? 0),
-        preictal_pct       : String(data.class_distribution?.Preictal?.pct    ?? 0),
-        ictal_pct          : String(data.class_distribution?.Ictal?.pct       ?? 0),
-        interictal_count   : String(data.class_distribution?.Interictal?.count ?? 0),
-        preictal_count     : String(data.class_distribution?.Preictal?.count   ?? 0),
-        ictal_count        : String(data.class_distribution?.Ictal?.count      ?? 0),
+        overall_urgency  : urgency,
+        overall_status   : data.overall_status,
+        overall_colour   : data.overall_colour,
+        advice           : data.advice,
+        total_windows    : String(data.total_windows    ?? 0),
+        time_taken_sec   : String(data.time_taken_sec   ?? 0),
+        file_name        : data.file_name ?? fileName,
+        dominant_label   : data.dominant_prediction?.label ?? '',
+        interictal_pct   : String(data.class_distribution?.Interictal?.pct   ?? 0),
+        preictal_pct     : String(data.class_distribution?.Preictal?.pct     ?? 0),
+        ictal_pct        : String(data.class_distribution?.Ictal?.pct        ?? 0),
+        interictal_count : String(data.class_distribution?.Interictal?.count ?? 0),
+        preictal_count   : String(data.class_distribution?.Preictal?.count   ?? 0),
+        ictal_count      : String(data.class_distribution?.Ictal?.count      ?? 0),
       };
  
-      // ── Route to correct result screen ──────────────────────────────────
       if (isSeizure) {
         router.replace({ pathname: '/seizure-detected',    params });
       } else {
@@ -206,27 +220,24 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
     } catch (err) {
       console.error('Analysis error:', err);
       Alert.alert(
-        'Network Error',
-        'Could not connect to the server.\nPlease check your connection and try again.'
+        'Error',
+        'An unexpected error occurred.\nPlease try again.'
       );
       router.back();
     }
   };
  
-  // ── Progress bar interpolation ────────────────────────────────────────────
   const progressWidth = progressAnim.interpolate({
     inputRange:  [0, 1],
     outputRange: ['0%', '100%'],
   });
  
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
  
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
  
-        {/* Brain with ripple rings */}
         <View style={styles.brainWrap}>
           <Animated.View style={[styles.ring, styles.ring3, { transform: [{ scale: ring3 }] }]} />
           <Animated.View style={[styles.ring, styles.ring2, { transform: [{ scale: ring2 }] }]} />
@@ -236,11 +247,9 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
           </Animated.View>
         </View>
  
-        {/* Title */}
         <Text style={styles.title}>Analyzing EEG Signals</Text>
         <Text style={styles.subtitle}>{statusMsg}</Text>
  
-        {/* Progress bar */}
         <View style={styles.progressBg}>
           <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
         </View>
@@ -248,7 +257,6 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
           Step {currentStep + 1} of {STEPS.length}
         </Text>
  
-        {/* Steps */}
         <View style={styles.stepsContainer}>
           {STEPS.map((step, index) => {
             const isDone   = index < currentStep;
@@ -268,7 +276,6 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
                   },
                 ]}
               >
-                {/* Circle */}
                 <View style={[
                   styles.stepCircle,
                   isDone   && styles.stepCircleDone,
@@ -285,7 +292,6 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
                   )}
                 </View>
  
-                {/* Label */}
                 <Text style={[
                   styles.stepText,
                   isDone   && styles.stepTextDone,
@@ -294,21 +300,18 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
                   {step.label}
                 </Text>
  
-                {/* Active dots */}
                 {isActive && (
                   <View style={styles.dotsRow}>
                     {[0, 1, 2].map(i => <View key={i} style={styles.dot} />)}
                   </View>
                 )}
  
-                {/* Done tag */}
                 {isDone && <Text style={styles.doneTag}>Done</Text>}
               </Animated.View>
             );
           })}
         </View>
  
-        {/* Footer */}
         <View style={styles.footer}>
           <MaterialCommunityIcons name="shield-check" size={14} color="rgba(255,255,255,0.6)" />
           <Text style={styles.footerText}>Powered by NeuroFusion-EEG · BiLSTM + SupCon</Text>
@@ -319,12 +322,10 @@ const AnalyzingScreen = ({ fileUri, fileType }) => {
   );
 };
  
-// ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#B844FF' },
   content:   { flex: 1, padding: 24, justifyContent: 'center' },
  
-  // Brain
   brainWrap: {
     alignSelf: 'center', alignItems: 'center', justifyContent: 'center',
     marginBottom: 28, width: 160, height: 160,
@@ -343,11 +344,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
  
-  // Titles
   title:    { fontSize: 24, fontWeight: '800', color: '#FFF', textAlign: 'center', marginBottom: 6 },
   subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.8)', textAlign: 'center', marginBottom: 20, minHeight: 20 },
  
-  // Progress
   progressBg: {
     height: 6, backgroundColor: 'rgba(255,255,255,0.25)',
     borderRadius: 6, overflow: 'hidden', marginBottom: 6,
@@ -355,7 +354,6 @@ const styles = StyleSheet.create({
   progressFill:  { height: '100%', backgroundColor: '#FFF', borderRadius: 6 },
   progressLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)', textAlign: 'right', marginBottom: 24 },
  
-  // Steps
   stepsContainer: { gap: 14, marginBottom: 28 },
   stepRow:        { flexDirection: 'row', alignItems: 'center', gap: 14 },
   stepCircle: {
@@ -374,7 +372,6 @@ const styles = StyleSheet.create({
   dot:     { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.7)' },
   doneTag: { fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: '600' },
  
-  // Footer
   footer:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   footerText: { fontSize: 11, color: 'rgba(255,255,255,0.5)' },
 });
