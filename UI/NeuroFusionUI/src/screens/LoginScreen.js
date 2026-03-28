@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   label:         { fontSize: 16, color: '#333333', marginBottom: 8, fontWeight: '500' },
   input: {
     borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 12,
-    padding: 16, fontSize: 16, marginBottom: 16, backgroundColor: '#F9F9F9',
+    padding: 16, fontSize: 16, marginBottom: 16, backgroundColor: '#F9F9F9',  color: '#333333',
   },
   loginButton:     { backgroundColor: '#B844FF', borderRadius: 28, padding: 16, alignItems: 'center', marginTop: 24 },
   loginButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: '600' },
