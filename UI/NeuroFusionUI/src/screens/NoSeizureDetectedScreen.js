@@ -101,7 +101,7 @@ const NoSeizureDetectedScreen = () => {
  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1A8A4A" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#1A8A4A" /> */}
  
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
  

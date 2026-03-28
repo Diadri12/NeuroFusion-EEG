@@ -126,7 +126,7 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#B844FF" /> */}
       
       {/* Animated particles/dots in background */}
       <View style={styles.particlesContainer}>

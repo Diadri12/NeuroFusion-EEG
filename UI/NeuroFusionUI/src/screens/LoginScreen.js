@@ -28,7 +28,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" /> */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <View style={styles.logoContainer}>

@@ -104,7 +104,7 @@ const DoctorReportsScreen = () => {
  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#B844FF" /> */}
  
       {/*Header*/}
       <Animated.View style={[styles.header, { opacity: headerFade }]}>

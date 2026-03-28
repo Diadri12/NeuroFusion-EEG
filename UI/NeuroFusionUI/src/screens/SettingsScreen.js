@@ -85,7 +85,7 @@ export default function SettingsScreen({ onSignOut, onNavigate }) {
  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#B844FF" /> */}
  
       {/* Custom sign out dialog */}
       <SignOutDialog

@@ -29,7 +29,7 @@ const SignUpScreen = ({ onSignUp, onNavigateToLogin }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" /> */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <View style={styles.logoContainer}>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   label:         { fontSize: 16, color: '#333333', marginBottom: 8, fontWeight: '500' },
   input: {
     borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 12,
-    padding: 16, fontSize: 16, marginBottom: 16, backgroundColor: '#F9F9F9',
+    padding: 16, fontSize: 16, marginBottom: 16, backgroundColor: '#F9F9F9',  color: '#333333',
   },
   signUpButton:     { backgroundColor: '#B844FF', borderRadius: 28, padding: 16, alignItems: 'center', marginTop: 24 },
   signUpButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: '600' },

@@ -87,20 +87,20 @@ const DoctorDashboardScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#B844FF" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#B844FF" /> */}
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 
         {/* ── Header ── */}
         <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
-          <View style={styles.statusBar}>
+          {/* <View style={styles.statusBar}>
             <Text style={styles.time}>10:00</Text>
             <View style={styles.statusIcons}>
               <MaterialCommunityIcons name="signal"  size={16} color="#FFF" />
               <MaterialCommunityIcons name="wifi"    size={16} color="#FFF" style={{ marginLeft: 4 }} />
               <MaterialCommunityIcons name="battery" size={16} color="#FFF" style={{ marginLeft: 4 }} />
             </View>
-          </View>
+          </View> */}
 
           <View style={styles.userSection}>
             <View style={styles.avatarLarge}>

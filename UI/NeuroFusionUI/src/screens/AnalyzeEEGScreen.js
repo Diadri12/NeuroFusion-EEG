@@ -135,7 +135,7 @@ const AnalyzeEEGScreen = ({ onStartAnalysis, onGoBack }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" /> */}
 
       {/* Header */}
       <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>

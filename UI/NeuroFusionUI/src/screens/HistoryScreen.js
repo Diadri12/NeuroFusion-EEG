@@ -226,7 +226,7 @@ const HistoryScreen = () => {
  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#FFF" /> */}
  
       {/* ── Header ── */}
       <Animated.View style={[styles.header, { opacity: headerFade }]}>

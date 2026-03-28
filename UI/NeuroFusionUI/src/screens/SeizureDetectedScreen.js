@@ -127,7 +127,7 @@ const SeizureDetectedScreen = () => {
  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#C0392B" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#C0392B" /> */}
  
       {/* ── Alert Banner ── */}
       {showBanner && (
